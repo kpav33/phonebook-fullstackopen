@@ -78,8 +78,31 @@ app.delete("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
   let person = request.body;
+
+  const findDuplicateName = persons.find(
+    (item) => item.name.toLowerCase() === person.name.toLowerCase()
+  );
+
+  if (!person.name) {
+    response.statusMessage = "Missing name property";
+    return response.status(400).json({
+      error: "Name missing",
+    });
+  } else if (!person.number) {
+    response.statusMessage = "Missing number property";
+    return response.status(400).json({
+      error: "Number missing",
+    });
+  } else if (findDuplicateName) {
+    response.statusMessage = `Person with name ${person.name} already present in the phonebook`;
+    return response.status(400).json({
+      error: "Duplicate name",
+    });
+  }
+
   person = {
-    ...person,
+    name: person.name,
+    number: person.number,
     id: id,
   };
 
