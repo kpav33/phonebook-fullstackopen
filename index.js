@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -40,12 +40,12 @@ app.get("/info", (request, response) => {
   response.send(html);
 });
 
-// All resources in JSON page
+// Display all resources in JSON page
 app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
-// Single resouce in JSON page
+// Display a resource in JSON page
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((person) => person.id === id);
@@ -62,6 +62,14 @@ app.get("/api/persons/:id", (request, response) => {
     response.statusMessage = `Person with id ${id} not found on server.`;
     response.status(404).end();
   }
+});
+
+// Delete a resource
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  persons = persons.filter((person) => person.id !== id);
+
+  response.status(204).end();
 });
 
 const PORT = 3001;
