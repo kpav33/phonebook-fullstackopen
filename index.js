@@ -25,10 +25,12 @@ const persons = [
   },
 ];
 
+// Root page
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
 });
 
+// Info page
 app.get("/info", (request, response) => {
   const date = new Date();
   const html = `<div>
@@ -38,8 +40,28 @@ app.get("/info", (request, response) => {
   response.send(html);
 });
 
+// All resources in JSON page
 app.get("/api/persons", (request, response) => {
   response.json(persons);
+});
+
+// Single resouce in JSON page
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const person = persons.find((person) => person.id === id);
+
+  if (person) {
+    response.json(person);
+  } else {
+    // Display custom error message as part of body content
+    // response
+    //   .status(404)
+    //   .send(`Person with id ${id} not found on server.`)
+    //   .end();
+    // Display custom error message in the header of the response
+    response.statusMessage = `Person with id ${id} not found on server.`;
+    response.status(404).end();
+  }
 });
 
 const PORT = 3001;
