@@ -2,6 +2,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: 1,
@@ -70,6 +72,20 @@ app.delete("/api/persons/:id", (request, response) => {
   persons = persons.filter((person) => person.id !== id);
 
   response.status(204).end();
+});
+
+// Add a resource
+app.post("/api/persons", (request, response) => {
+  const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
+  let person = request.body;
+  person = {
+    ...person,
+    id: id,
+  };
+
+  persons = [...persons, person];
+
+  response.json(person);
 });
 
 const PORT = 3001;
