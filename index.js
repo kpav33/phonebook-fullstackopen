@@ -3,8 +3,28 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 
+// Add morgan token so that it shows the data sent in HTTP POST request
+morgan.token("showPostData", (request, response) => {
+  if (request.method === "POST") {
+    return JSON.stringify(request.body);
+  } else {
+    return " ";
+  }
+});
+
+// Middleware
 app.use(express.json());
-app.use(morgan("tiny"));
+// Morgan configuration for part3 exercise 3.8. by using custom tokens formats
+// https://github.com/expressjs/morgan#tiny
+// https://github.com/expressjs/morgan#use-custom-token-formats
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :showPostData"
+  )
+);
+// Use middleware morgan with the tiny configuration
+// https://github.com/expressjs/morgan
+// app.use(morgan("tiny"));
 
 let persons = [
   {
@@ -112,6 +132,14 @@ app.post("/api/persons", (request, response) => {
 
   response.json(person);
 });
+
+// Example of defining middleware after routes
+// Example of catching requests made to non-existent routes
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
