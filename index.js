@@ -1,6 +1,7 @@
 // const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 
 // Add morgan token so that it shows the data sent in HTTP POST request
@@ -13,6 +14,9 @@ morgan.token("showPostData", (request, response) => {
 });
 
 // Middleware
+// Allow request from other origins
+app.use(cors());
+// Parse incoming requests with incoming JSON payloads so that you can access it in request.body
 app.use(express.json());
 // Morgan configuration for part3 exercise 3.8. by using custom tokens formats
 // https://github.com/expressjs/morgan#tiny
