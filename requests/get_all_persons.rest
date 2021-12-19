@@ -1,1 +1,2 @@
-GET http://localhost:3001/api/persons
+# GET http://localhost:3001/api/persons
+GET https://mighty-plateau-10046.herokuapp.com/api/persons
