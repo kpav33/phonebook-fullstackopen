@@ -14,6 +14,8 @@ morgan.token("showPostData", (request, response) => {
 });
 
 // Middleware
+// Set express to show static content (display the frontend from the build directory)
+app.use(express.static("build"));
 // Allow request from other origins
 app.use(cors());
 // Parse incoming requests with incoming JSON payloads so that you can access it in request.body
