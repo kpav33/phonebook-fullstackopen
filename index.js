@@ -77,13 +77,18 @@ app.get("/", (request, response) => {
 });
 
 // Info page
-app.get("/info", (request, response) => {
-  const date = new Date();
-  const html = `<div>
-                    <p>Phonebook has info for ${persons.length} people.</p>
-                    <p>${date}</p>
-                </div>`;
-  response.send(html);
+app.get("/info", (request, response, next) => {
+  // Return number of documents in the collection
+  Person.count({})
+    .then((count) => {
+      const date = new Date();
+      const html = `<div>
+      <p>Phonebook has info for ${count} people.</p>
+      <p>${date}</p>
+  </div>`;
+      response.send(html);
+    })
+    .catch((error) => next(error));
 });
 
 // Display all resources in JSON page
