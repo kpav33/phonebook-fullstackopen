@@ -127,7 +127,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 });
 
 // Delete a resource
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   // const id = Number(request.params.id);
   // persons = persons.filter((person) => person.id !== id);
   // response.status(204).end();
@@ -139,7 +139,7 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 // Add a resource
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   // const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
   let person = request.body;
 
@@ -185,6 +185,22 @@ app.post("/api/persons", (request, response) => {
     .save()
     .then((savedPerson) => {
       response.json(savedPerson);
+    })
+    .catch((error) => next(error));
+});
+
+// Update a persons number
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
     })
     .catch((error) => next(error));
 });
