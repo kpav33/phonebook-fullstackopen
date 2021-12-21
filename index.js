@@ -1,3 +1,4 @@
+// Check earlier commits to see how the code looked like before using MongoDB as database
 // dotenv imported before Person model, ensures that enviroment variables from .env are available globally
 require("dotenv").config();
 // const http = require("http");
@@ -18,7 +19,7 @@ morgan.token("showPostData", (request, response) => {
 });
 
 // Middleware
-// Set express to show static content (display the frontend from the build directory)
+// Set express to show static content (display the frontend from the build directory to the root page)
 app.use(express.static("build"));
 // Allow request from other origins
 app.use(cors());
@@ -48,29 +49,6 @@ app.use(
 // https://github.com/expressjs/morgan
 // app.use(morgan("tiny"));
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 // Root page
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
@@ -93,8 +71,6 @@ app.get("/info", (request, response, next) => {
 
 // Display all resources in JSON page
 app.get("/api/persons", (request, response) => {
-  // response.json(persons);
-  // Fetch from MongoDB
   Person.find({}).then((persons) => {
     response.json(persons);
   });
@@ -110,32 +86,11 @@ app.get("/api/persons/:id", (request, response, next) => {
         response.status(404).end();
       }
     })
-    // .catch((error) => {
-    //   console.log(error);
-    //   response.status(400).send({ error: "malformatted id" });
-    // });
     .catch((error) => next(error));
-  // const id = Number(request.params.id);
-  // const person = persons.find((person) => person.id === id);
-  // if (person) {
-  //   response.json(person);
-  // } else {
-  //   // Display custom error message as part of body content
-  //   // response
-  //   //   .status(404)
-  //   //   .send(`Person with id ${id} not found on server.`)
-  //   //   .end();
-  //   // Display custom error message in the header of the response
-  //   response.statusMessage = `Person with id ${id} not found on server.`;
-  //   response.status(404).end();
-  // }
 });
 
 // Delete a resource
 app.delete("/api/persons/:id", (request, response, next) => {
-  // const id = Number(request.params.id);
-  // persons = persons.filter((person) => person.id !== id);
-  // response.status(204).end();
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -145,47 +100,17 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 // Add a resource
 app.post("/api/persons", (request, response, next) => {
-  // const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
   let person = request.body;
 
   if (person.name === undefined || person.number === undefined) {
     return response.status(400).json({ error: "content missing" });
   }
 
-  // const findDuplicateName = persons.find(
-  //   (item) => item.name.toLowerCase() === person.name.toLowerCase()
-  // );
-
-  // if (!person.name) {
-  //   response.statusMessage = "Missing name property";
-  //   return response.status(400).json({
-  //     error: "Name missing",
-  //   });
-  // } else if (!person.number) {
-  //   response.statusMessage = "Missing number property";
-  //   return response.status(400).json({
-  //     error: "Number missing",
-  //   });
-  // } else if (findDuplicateName) {
-  //   response.statusMessage = `Person with name ${person.name} already present in the phonebook`;
-  //   return response.status(400).json({
-  //     error: "Duplicate name",
-  //   });
-  // }
-
-  // person = {
-  //   name: person.name,
-  //   number: person.number,
-  //   id: id,
-  // };
   const personData = new Person({
     name: person.name,
     number: person.number,
   });
 
-  // persons = [...persons, person];
-
-  // response.json(person);
   personData
     .save()
     .then((savedPerson) => {
