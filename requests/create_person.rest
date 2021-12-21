@@ -1,18 +1,18 @@
-GET http://localhost:3001/api/persons
+# GET http://localhost:3001/api/persons
 
 ###
-# POST http://localhost:3001/api/persons
-# Content-Type: application/json
-
-# {
-#     "name": "John Smith",
-#     "number": "49-23-6423122"
-# }
-
-POST https://mighty-plateau-10046.herokuapp.com/api/persons
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "John Smith",
+    "name": "John Novak",
     "number": "49-23-6423122"
 }
+
+# POST https://mighty-plateau-10046.herokuapp.com/api/persons
+# Content-Type: application/json
+
+# {
+#     "name": "John Novak",
+#     "number": "49-23-6423122"
+# }

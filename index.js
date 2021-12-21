@@ -85,21 +85,23 @@ app.get("/api/persons", (request, response) => {
 
 // Display a resource in JSON page
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    // Display custom error message as part of body content
-    // response
-    //   .status(404)
-    //   .send(`Person with id ${id} not found on server.`)
-    //   .end();
-    // Display custom error message in the header of the response
-    response.statusMessage = `Person with id ${id} not found on server.`;
-    response.status(404).end();
-  }
+  Person.findById(request.params.id).then((note) => {
+    response.json(note);
+  });
+  // const id = Number(request.params.id);
+  // const person = persons.find((person) => person.id === id);
+  // if (person) {
+  //   response.json(person);
+  // } else {
+  //   // Display custom error message as part of body content
+  //   // response
+  //   //   .status(404)
+  //   //   .send(`Person with id ${id} not found on server.`)
+  //   //   .end();
+  //   // Display custom error message in the header of the response
+  //   response.statusMessage = `Person with id ${id} not found on server.`;
+  //   response.status(404).end();
+  // }
 });
 
 // Delete a resource
@@ -112,39 +114,50 @@ app.delete("/api/persons/:id", (request, response) => {
 
 // Add a resource
 app.post("/api/persons", (request, response) => {
-  const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
+  // const id = Math.floor(Math.random() * (1001 - 0 + 1) + 0);
   let person = request.body;
 
-  const findDuplicateName = persons.find(
-    (item) => item.name.toLowerCase() === person.name.toLowerCase()
-  );
-
-  if (!person.name) {
-    response.statusMessage = "Missing name property";
-    return response.status(400).json({
-      error: "Name missing",
-    });
-  } else if (!person.number) {
-    response.statusMessage = "Missing number property";
-    return response.status(400).json({
-      error: "Number missing",
-    });
-  } else if (findDuplicateName) {
-    response.statusMessage = `Person with name ${person.name} already present in the phonebook`;
-    return response.status(400).json({
-      error: "Duplicate name",
-    });
+  if (person.name === undefined || person.number === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  person = {
+  // const findDuplicateName = persons.find(
+  //   (item) => item.name.toLowerCase() === person.name.toLowerCase()
+  // );
+
+  // if (!person.name) {
+  //   response.statusMessage = "Missing name property";
+  //   return response.status(400).json({
+  //     error: "Name missing",
+  //   });
+  // } else if (!person.number) {
+  //   response.statusMessage = "Missing number property";
+  //   return response.status(400).json({
+  //     error: "Number missing",
+  //   });
+  // } else if (findDuplicateName) {
+  //   response.statusMessage = `Person with name ${person.name} already present in the phonebook`;
+  //   return response.status(400).json({
+  //     error: "Duplicate name",
+  //   });
+  // }
+
+  // person = {
+  //   name: person.name,
+  //   number: person.number,
+  //   id: id,
+  // };
+  const personData = new Person({
     name: person.name,
     number: person.number,
-    id: id,
-  };
+  });
 
-  persons = [...persons, person];
+  // persons = [...persons, person];
 
-  response.json(person);
+  // response.json(person);
+  personData.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 // Example of defining middleware after routes
