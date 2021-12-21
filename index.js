@@ -1,8 +1,12 @@
+// dotenv imported before Person model, ensures that enviroment variables from .env are available globally
+require("dotenv").config();
 // const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
+// Import database model
+const Person = require("./models/person");
 
 // Add morgan token so that it shows the data sent in HTTP POST request
 morgan.token("showPostData", (request, response) => {
@@ -72,7 +76,11 @@ app.get("/info", (request, response) => {
 
 // Display all resources in JSON page
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  // response.json(persons);
+  // Fetch from MongoDB
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 // Display a resource in JSON page
@@ -147,7 +155,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
 
 // const app = http.createServer((request, response) => {
