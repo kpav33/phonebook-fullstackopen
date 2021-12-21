@@ -24,6 +24,18 @@ app.use(express.static("build"));
 app.use(cors());
 // Parse incoming requests with incoming JSON payloads so that you can access it in request.body
 app.use(express.json());
+
+// Error handler middleware
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
 // Morgan configuration for part3 exercise 3.8. by using custom tokens formats
 // https://github.com/expressjs/morgan#tiny
 // https://github.com/expressjs/morgan#use-custom-token-formats
@@ -84,10 +96,20 @@ app.get("/api/persons", (request, response) => {
 });
 
 // Display a resource in JSON page
-app.get("/api/persons/:id", (request, response) => {
-  Person.findById(request.params.id).then((note) => {
-    response.json(note);
-  });
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((note) => {
+      if (note) {
+        response.json(note);
+      } else {
+        response.status(404).end();
+      }
+    })
+    // .catch((error) => {
+    //   console.log(error);
+    //   response.status(400).send({ error: "malformatted id" });
+    // });
+    .catch((error) => next(error));
   // const id = Number(request.params.id);
   // const person = persons.find((person) => person.id === id);
   // if (person) {
@@ -113,9 +135,7 @@ app.delete("/api/persons/:id", (request, response) => {
     .then((result) => {
       response.status(204).end();
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => next(error));
 });
 
 // Add a resource
@@ -161,9 +181,12 @@ app.post("/api/persons", (request, response) => {
   // persons = [...persons, person];
 
   // response.json(person);
-  personData.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+  personData
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 // Example of defining middleware after routes
@@ -173,6 +196,8 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+// Error handler must be the last loaded middleware
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
