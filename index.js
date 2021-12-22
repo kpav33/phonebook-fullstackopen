@@ -61,9 +61,9 @@ app.get("/info", (request, response, next) => {
     .then((count) => {
       const date = new Date();
       const html = `<div>
-      <p>Phonebook has info for ${count} people.</p>
-      <p>${date}</p>
-  </div>`;
+                      <p>Phonebook has info for ${count} people.</p>
+                      <p>${date}</p>
+                    </div>`;
       response.send(html);
     })
     .catch((error) => next(error));
@@ -113,8 +113,12 @@ app.post("/api/persons", (request, response, next) => {
 
   personData
     .save()
-    .then((savedPerson) => {
-      response.json(savedPerson);
+    // Many route handlers change the response data into the right format by implicitly calling toJSON() method
+    // You can also do this explicitly as shown below, but it is not necessary
+    // This code could skip the toJSON() method and simply be .then(savedPerson => response.json(savedPerson))
+    .then((savedPerson) => savedPerson.toJSON())
+    .then((savedAndFormattedPerson) => {
+      response.json(savedAndFormattedPerson);
     })
     .catch((error) => next(error));
 });
