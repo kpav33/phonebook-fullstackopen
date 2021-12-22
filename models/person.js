@@ -22,8 +22,9 @@ const personSchema = new mongoose.Schema({
     unique: true,
     uniqueCaseInsensitive: true,
     trim: true,
+    minlength: 3,
   },
-  number: { type: String, required: true, unique: true },
+  number: { type: String, required: true, unique: true, minlength: 8 },
 });
 // Use the uniqueValidator plugin to check for duplicates
 personSchema.plugin(uniqueValidator);
