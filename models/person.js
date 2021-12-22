@@ -15,6 +15,8 @@ mongoose
   });
 
 // Define person schema with validation
+// https://github.com/blakehaswell/mongoose-unique-validator#readme
+// https://www.npmjs.com/package/mongoose-unique-validator#case-insensitive
 const personSchema = new mongoose.Schema({
   name: {
     type: String,

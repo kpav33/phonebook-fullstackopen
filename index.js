@@ -134,6 +134,7 @@ app.put("/api/persons/:id", (request, response, next) => {
     number: body.number,
   };
 
+  // https://stackoverflow.com/questions/18878131/findbyidandupdate-set-does-not-check-for-unique
   Person.findByIdAndUpdate(request.params.id, person, {
     new: true,
     runValidators: true,
